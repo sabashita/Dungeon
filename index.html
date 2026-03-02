@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="author" content="Haiyang Li">
+    <meta name="shopstore" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="css/style.css" rel="stylesheet" type="text/css">
+    <title>Dungeon Loot Splitter</title>
+
+    <h1>Dungeon Loot Splitter</h1>
+    <script src="js/script.js" defer></script>
+
+</head>
+
+
+
+<main>
+    <div class="wrapper" id="partyPanel">
+        <div class="col" style="width: 32%;">
+            <h2>Party Setup</h2>
+            <div>
+
+                <label for="partySize">Members:</label>
+                <input id="partySize" type="number" min="1" />
+                <div class="btnRow">
+                    <input type="button" name="button" value="add" id="addParty" />
+                </div>
+                
+            </div>
+            <div id="partyList"></div>
+        </div>
+        <div class="col" style="width: 32%;">
+            <h2>Add Loot</h2>
+            <label for="lootName">Loot Name:</label>
+            <input id="lootName" type="text" />
+            <label for="lootValue">Loot Value:</label>
+            <input id="lootValue" type="number" step="0.01" />
+            <input id="addBtn" type="button" value="addLot" name="addLot" onclick="addLot();"/>
+            <p id="addMsg"></p>
+
+        </div>
+        <div class="col" style="width: 32%;">
+            <h2>Loot List</h2>
+            <ul id="lootList">
+
+            </ul>
+            <p>Total of Loot: <input id="runningTotal" type="text" disabled /></p>
+        </div>
+
+    </div>
+
+
+    <div class="wrapper" id="splitPanel">
+        <div class="col"  style="width: 50%;" reflection">
+            <h2>Logic Explanation</h2>
+            <p>...</p>
+            <img src="images/validation.png" alt="Logic flow sketch" />
+        </div>
+        <div class="col" style="width: 50%;">
+            <h2>Split Loot</h2>
+            <button id="splitBtn">Split Loot</button>
+            <div id="results">
+                <p>Total Loot: <input id="finalTotal" type="text" disabled /></p>
+                <p>Loot Per Party Member:<input id="perMember" type="text" disabled /></p>
+            </div>
+            <p id="splitMsg"></p>
+        </div>
+        
+    </div>
+
+
+</main>
+
+</html>
