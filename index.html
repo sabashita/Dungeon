@@ -8,10 +8,8 @@
     <meta name="shopstore" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link href="css/style.css" rel="stylesheet" type="text/css">
     <title>Dungeon Loot Splitter</title>
-
     <h1>Dungeon Loot Splitter</h1>
     <script src="js/script.js" defer></script>
-
 </head>
 
 
@@ -44,23 +42,23 @@
             <ul id="lootList">
 
             </ul>
-            <p>Total of Loot: <input id="runningTotal" type="text" disabled /></p>
+            <p>Total of Loot:</p> <input id="runningTotal" type="text" disabled />
         </div>
 
     </div>
 
 
     <div class="wrapper" id="splitPanel">
-        <div class="col"  style="width: 50%;" reflection">
+        <div class="col"  style="width: 50%;">
             <h2>Logic Explanation</h2>
-            <img src="images/sketch.png" alt="Logic flow sketch" width="150px" height="150px"/>
+            <img src="images/sketch.png" alt="Logic flow sketch" width="150" height="150"/>
         </div>
         <div class="col" style="width: 50%;">
             <h2>Split Loot</h2>
             <button id="splitBtn">Split Loot</button>
             <div id="results">
-                <p>Total Loot: <input id="finalTotal" type="text" disabled /></p>
-                <p>Loot Per Party Member:<input id="perMember" type="text" disabled /></p>
+                <p>Total Loot: <input id="finalTotal" type="text" disabled ></p>
+                <p>Loot Per Party Member:<input id="perMember" type="text" disabled ></p>
             </div>
             <p id="splitMsg"></p>
         </div>
