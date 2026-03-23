@@ -2,6 +2,8 @@ let membersNumer = 1; // members of party
 let lootList = []; // loot list
 const LOOT_KEY = "Dungeon_loot_splitter";
 let total = 0; // total price
+const STUDENT_ID = "haiyangL"; 
+
 
 document.getElementById("partySize").addEventListener("input", changeMembers);
 document.getElementById("addBtn").addEventListener("click", addLot);
@@ -195,6 +197,151 @@ function render(members) {
     membersNumer = Number(members);
     partyItems.style.backgroundColor = "#4ab8ef";
     party.appendChild(partyItems);
+}
+
+
+
+// Phase 4 buttons
+const syncBtn = document.getElementById("syncBtn");
+if (syncBtn) {
+    syncBtn.addEventListener("click", syncToServer);
+}
+
+const loadBtn = document.getElementById("loadBtn");
+if (loadBtn) {
+    loadBtn.addEventListener("click", loadFromServer);
+}
+
+// server message 
+function showServerMessage(message, isError) {
+    let msg = document.getElementById("serverMsg");
+    if (!msg) return;
+
+    msg.textContent = message;
+    msg.style.color = isError ? "red" : "green";
+}
+
+//  Sync to Server 
+function syncToServer() {
+
+    const payload = {
+        studentId: STUDENT_ID,
+        state: {
+            loot: lootList,
+            partySize: membersNumer
+        }
+    };
+
+    fetch("http://goldtop.hopto.org/save/" + STUDENT_ID, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("Server sync failed");
+        }
+        return response.json();
+    })
+    .then(data => {
+        // success only if status === "saved"
+        if (data.status === "saved" && data.studentId === STUDENT_ID) {
+            showServerMessage("Sync successful.", false);
+        } else {
+            showServerMessage("Invalid server response.", true);
+        }
+    })
+    .catch(error => {
+        showServerMessage("Sync failed: " + error.message, true);
+    });
+}
+
+//  validate servers
+function validateLoadedState(data) {
+
+    if (!data || typeof data !== "object") {
+        return null;
+    }
+    if (data.status !== "loaded"){
+        return null;
+    }
+    if (data.studentId !== STUDENT_ID){
+        return null;
+    }
+    if (!data.state || typeof data.state !== "object"){
+        return null;
+    } 
+
+    if (!Array.isArray(data.state.loot)){
+        return null;
+    } 
+    if (!Number.isInteger(data.state.partySize) || data.state.partySize < 1){
+        return null;
+    }
+
+    let validatedLoot = [];
+
+    for (let i = 0; i < data.state.loot.length; i++) {
+        let item = data.state.loot[i];
+
+        if (item && typeof item.lootName === "string" && item.lootName.trim() !== "" 
+        && !Number.isNaN(Number(item.lootValue)) && Number(item.lootValue) >= 0) {
+            
+            validatedLoot.push({
+                lootName: item.lootName.trim(),
+                lootValue: Number(item.lootValue)
+            });
+        } else {
+            return null; // fail if any invalid item
+        }
+    }
+
+    return {
+        loot: validatedLoot,
+        partySize: data.state.partySize
+    };
+}
+
+// ---------- Phase 4: Load from Server ----------
+function loadFromServer() {
+
+    fetch("http://goldtop.hopto.org/load/" + STUDENT_ID).then(response => {
+        if (!response.ok) {
+            throw new Error("Server load failed");
+        }
+        return response.json();
+    }).then(data => {
+
+        // server has no data
+        if (data.status === "empty") {
+            showServerMessage("No server data found.", true);
+            return;
+        }
+
+        let validated = validateLoadedState(data);
+
+        if (!validated) {
+            showServerMessage("Invalid server data. State not changed.", true);
+            return;
+        }
+
+        // Assign ONLY after full validation
+        lootList = validated.loot;
+        membersNumer = validated.partySize;
+
+        document.getElementById("partySize").value = membersNumer;
+
+        // lifecycle: Fetch → Validate → Assign → Save → Render
+        saveState();
+        render(membersNumer);
+        renderLootList();
+
+        showServerMessage("Load successful.", false);
+    }).catch(error => {
+        showServerMessage("Load failed: " + error.message, true);
+    });
 }
 
 // ---------- init ----------
